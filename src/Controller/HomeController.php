@@ -16,4 +16,13 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController',
         ]);
     }
+
+    /**
+     * @Route("/hello/{name}", name="hello")
+     */
+    public function hello ($name = "anonyme"){
+        return $this->render('home/hello.html.twig', [
+            'name' => $name
+        ]);
+    }
 }
