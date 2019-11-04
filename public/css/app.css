@@ -14,3 +14,7 @@ div.article-title h1, div.article-title p{
 div.carousel-caption{
     text-shadow: 3px 3px 3px rgba(0,0,0,0.5);
 }
+
+#ad_content{
+    display: block !important;
+}

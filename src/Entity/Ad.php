@@ -3,13 +3,20 @@
 namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AdRepository")
  * @ORM\HasLifecycleCallbacks
+ * @UniqueEntity(
+ * fields={"title"},
+ * message="Un article possède déja ce titre, merci de le modifier"
+ * 
+ * )
  */
 class Ad
 {
@@ -22,6 +29,7 @@ class Ad
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=10, max=255, minMessage="Le titre doit faire plus de 10 caractères", maxMessage="Le titre ne doit pas dépasser 255 caractères")
      */
     private $title;
 
@@ -32,6 +40,7 @@ class Ad
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\Length(min=15, max=250, minMessage="L'introduction doit faire plus de 15 caractères", maxMessage="Le titre ne doit pas dépasser 250 caractères")
      */
     private $introduction;
 
@@ -42,11 +51,13 @@ class Ad
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Url()
      */
     private $coverImage;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="ad", orphanRemoval=true)
+     * @Assert\Valid()
      */
     private $images;
 
