@@ -4,7 +4,7 @@
 
 {% block body %}
 
-    <div class="article-title" style="background-image: url( {{ ad.coverImage }}); height: 200px" >
+    <div class="article-title" style="background-image: url( {{ ad.coverImage }} ); height: 200px" >
         <div class="container">
             <h1 class="text-center">{{ ad.title }}</h1>
             <p class="text-center">{{ ad.introduction }}</p>
@@ -46,11 +46,11 @@
             <div class="col">
                 {% set a = ad.author %}
                 <div class="row mb-3 align-items-center">
-                    <div class="col-4">
+                    <div class="col-3">
                         <img src="{{ a.picture }}" class="avatar avatar-medium" alt="Avatar de {{ a.fullName }}">
                     </div>
                     <div class="col">
-                        <h3>{{ a.fullName }}</h3>
+                        <h3><a href="{{ path('user_show', {slug: a.slug}) }}">{{ a.fullName }}</a></h3>
                         <span class="badge badge-primary">{{ a.ads | length }} articles</span>
                     </div>
                 </div>
