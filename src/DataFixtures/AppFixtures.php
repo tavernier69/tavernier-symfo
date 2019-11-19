@@ -4,8 +4,10 @@ namespace App\DataFixtures;
 
 use App\Entity\Ad;
 use Faker\Factory;
+use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\Image;
+use App\Entity\Comment;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -21,6 +23,20 @@ public function __construct(UserPasswordEncoderInterface $encoder){
         // $product = new Product();
         // $manager->persist($product);
         $faker = Factory::create('FR-fr');
+
+        $adminRole = new Role();
+        $adminRole->setTitle('ROLE_ADMIN');
+        $manager->persist($adminRole);
+        $adminUser = new User();
+        $adminUser->setFirstName('Romain')
+                  ->setLastName('Sardella')
+                  ->setEmail('termitatur@msn.com')
+                  ->sethash($this->encoder->encodepassword($adminUser, 'password'))
+                  ->setPicture('https://randomuser.me/api/portraits/women/28.jpg')
+                  ->setIntroduction($faker->sentence())
+                  ->setText('<p>' . join('<p></p>', $faker->paragraphs(1)) . '</p>')
+                  ->addUserRole($adminRole);
+        $manager->persist($adminUser);
 
         // Nous gérons les utilisateurs
         $users = [];
@@ -74,7 +90,16 @@ public function __construct(UserPasswordEncoderInterface $encoder){
             $image->seturl($faker->imageurl())
                   ->setCaption($faker->sentence())
                   ->setAd($ad);
-                  $manager->persist($image);
+            $manager->persist($image);
+            
+            if(mt_rand(0, 1)){
+                $comment = new Comment();
+                $comment->setDescription($faker->paragraph(1))
+                        ->setRating(mt_rand(1, 5))
+                        ->setAuthor($user)
+                        ->setAd($ad);
+                $manager->persist($comment);
+            }
         }
 
             $manager->persist($ad);

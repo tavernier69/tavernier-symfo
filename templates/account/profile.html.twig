@@ -3,7 +3,6 @@
 {% block title %}Modification du profil utilisateur{% endblock %}
 
 {% block body %}
-
     <div class="container">
         <h1>Modification du profil</h1>
         {{ form_start(form) }}
@@ -13,3 +12,12 @@
     </div>
     
 {% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).on('change', '.custom-file-input', function () {
+        let fileName = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+        $(this).parent('.custom-file').find('.custom-file-label').text(fileName);
+    });
+</script>
+{% endblock  %}

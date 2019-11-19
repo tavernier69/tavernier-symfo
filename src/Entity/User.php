@@ -47,7 +47,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Url(message="Veuillez donner une URL valide pour votre avatar")
+     * @Assert\NotBlank(message="Veuillez donner une URL valide pour votre avatar")
      */
     private $picture;
 
@@ -70,8 +70,8 @@ class User implements UserInterface
     private $introduction;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(min=100, minMessage="Votre description doit faire au moins 100 caracteres")
+     * @ORM\Column(type="text", length=255, nullable=true)
+     * @Assert\Length(min=50, minMessage="Votre description doit faire au moins 100 caracteres")
      */
     private $text;
 
@@ -85,6 +85,16 @@ class User implements UserInterface
      */
     private $ads;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Role", mappedBy="users")
+     */
+    private $userRoles;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
+     */
+    private $comments;
+
     public function getFullName(){
         return "{$this->firstName} {$this->lastName}";
     }
@@ -92,6 +102,8 @@ class User implements UserInterface
     public function __construct()
     {
         $this->ads = new ArrayCollection();
+        $this->userRoles = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -241,7 +253,12 @@ class User implements UserInterface
     }
 
     public function getRoles() {
-             return ['ROLE_USER'];
+        
+        $roles = $this->userRoles->map(function($role){
+            return $role->getTitle();
+        })->toArray();
+        $roles[] = 'ROLE_USER';
+             return $roles;
     }
 
     public function getPassword(){
@@ -255,4 +272,63 @@ class User implements UserInterface
     }
 
     public function eraseCredentials(){}
+
+    /**
+     * @return Collection|Role[]
+     */
+    public function getUserRoles(): Collection
+    {
+        return $this->userRoles;
+    }
+
+    public function addUserRole(Role $userRole): self
+    {
+        if (!$this->userRoles->contains($userRole)) {
+            $this->userRoles[] = $userRole;
+            $userRole->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRole(Role $userRole): self
+    {
+        if ($this->userRoles->contains($userRole)) {
+            $this->userRoles->removeElement($userRole);
+            $userRole->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getAuthor() === $this) {
+                $comment->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
 }

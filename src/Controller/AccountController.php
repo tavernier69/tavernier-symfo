@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -62,6 +63,10 @@ class AccountController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()){
         $hash = $encoder->encodePassword($user, $user->getHash());
+        $file = $form['picture']->getData();
+        $name_file = $file->getClientOriginalName();
+        $file->move($this->getParameter('picture_directory'), $name_file);
+        $user->setPicture('images/'.$name_file);
 
         $user->setHash($hash);
 
@@ -85,6 +90,7 @@ class AccountController extends AbstractController
     /**
      * permet d'afficher et de traiter le formulaire de modification du profil
      * @Route("/account/profile", name="account_profile")
+     * @IsGranted("ROLE_USER")
      *
      * @return Response
      */
@@ -95,8 +101,12 @@ class AccountController extends AbstractController
         $form = $this->createForm(AccountType::class, $user);
 
         $form->handleRequest($request);
-
+        $directory = $this->getParameter('path_directory');
         if($form->isSubmitted() && $form->isValid()){
+            $file = $form['picture']->getData();
+            $name_file = $file->getClientOriginalName();
+            $file->move($this->getParameter('picture_directory'), $name_file);
+            $user->setPicture('images/'.$name_file);
             $manager->persist($user);
             $manager->flush();
 
@@ -107,6 +117,7 @@ class AccountController extends AbstractController
         }
 
         return $this->render('account/profile.html.twig', [
+            'path_pict' => $directory,
             'form' => $form->createView()
         ]);
 
@@ -115,6 +126,7 @@ class AccountController extends AbstractController
     /**
      * permet de modifier le mot de passe
      * @Route("/account/password-update", name="account_password")
+     * @IsGranted("ROLE_USER")
      *
      * @return Response
      */
@@ -155,6 +167,8 @@ class AccountController extends AbstractController
      * permet d'afficher le profil de l'utilisateur connecté
      *
      * @Route("/account", name="account_index")
+     * @IsGranted("ROLE_USER")
+     * 
      * @return Response
      */
     public function myAccount(){

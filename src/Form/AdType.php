@@ -22,7 +22,7 @@ class AdType extends ApplicationType
             ->add('title', TextType::class, $this->getConfiguration('Titre', 'Entrer un titre pour l\'article'))
             ->add('slug', TextType::class, $this->getConfiguration('Url', 'Adresse web (Automatique)', ['required' => false]))
             ->add('introduction', TextType::class, $this->getConfiguration('Introduction', 'Entrer une introduction'))
-            ->add('content', TextareaType::class, $this->getConfiguration('Contenu', 'Entrer du contenu pour l\'article'))
+            ->add('description', TextareaType::class, $this->getConfiguration('Contenu', 'Entrer du contenu pour l\'article'))
             ->add('coverImage', UrlType::class, $this->getConfiguration('Image', 'URL de l\'image principale'))
             ->add('images', CollectionType::class, [
                 'entry_type' => ImageType::class,
