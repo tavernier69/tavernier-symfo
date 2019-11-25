@@ -1,20 +1,34 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base.html.twig' %}
 
-{% block title %}Hello AdminAdController!{% endblock %}
+{% block title %}Administration des articles{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/wamp64/www/tavernier/src/Controller/AdminAdController.php'|file_link(0) }}">src/Controller/AdminAdController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/wamp64/www/tavernier/templates/admin_ad/index.html.twig'|file_link(0) }}">templates/admin_ad/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="container-fluid">
+        <h1 class="my-5"></h1>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Note</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad in ads %}
+                        <tr>
+                            <td>{{ ad.id }}</td>
+                            <td>{{ ad.title }}</td>
+                            <td>{{ ad.author.fullname }}</td>
+                            <td>{{ ad.avgRatings }}</td>
+                            <td>
+                                <a href="{{ path('admin_ads_edit', {'id': ad.id} ) }}" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                                <a href="{{ path('admin_ads_delete', {'id': ad.id} ) }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
 {% endblock %}

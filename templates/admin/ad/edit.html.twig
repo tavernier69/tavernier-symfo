@@ -1,0 +1,52 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Modification de l'articles {{ ad.title }}{% endblock %}
+
+{% form_theme form _self %}
+
+{% block body %}
+    <div class="container">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary">Modifier l'annonce</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block _ad_images_entry_row %}
+    <div id="block_{{ id }}">
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}
+
+{% block _ad_images_widget %}
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block _ad_images_entry_widget %}
+    <div class="row align-items-center mb-3">
+        <div class="col-4">
+            {% if value %}
+                <img src="{{ value.url }}" alt="" class="img-fluid">
+            {% endif %}
+        </div>
+        <div class="col-6">
+                {{ form_row(form.caption) }}
+        </div>
+        <div class="col">
+            <button class="btn btn-danger" data-action="delete" data-target="#block_{{ id }}"><i class="fas fa-trash"></i></button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function(){
+            $('[data-action="delete"]').on('click', function(){
+                const target = $(this).data('target');
+                $(target).remove();
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
