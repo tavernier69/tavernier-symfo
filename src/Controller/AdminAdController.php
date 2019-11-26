@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ad;
 use App\Form\AdType;
+use App\Entity\Comment;
 use App\Repository\AdRepository;
 use App\Repository\CommentRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,8 +80,29 @@ class AdminAdController extends AbstractController
     public function comment(CommentRepository $repo)
     {
         return $this->render('admin/comment/index.html.twig', [
-            'COMMENTS' => $repo->findAll(),
+            'comments' => $repo->findAll(),
         ]);
+    }
+
+    /**
+     * Permet d'effacer un commentaire
+     *
+     * @param Ad $ad
+     * @param ObjectManager $manager
+     * 
+     * @return void
+    * @Route("/admin/comments/{id}/delete", name="admin_comments_delete")
+     */
+    public function delete_comment(Comment $comment, ObjectManager $manager){
+
+        $manager->remove($comment);
+        $manager->flush();
+        $this->addFlash(
+            'success',
+            "Le commentaire de <strong>{$comment->getAuthor()->getFullName()}</strong> pour l'annonce <strong>{$comment->getAd()->getTitle()}</strong> a bien été supprimée"
+        );
+
+        return $this->redirectToRoute('admin_comments_index');
     }
 
     /**

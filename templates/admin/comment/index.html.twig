@@ -9,19 +9,24 @@
                 <thead>
                     <tr>
                         <th>Id</th>
+                        <th>Auteur</th>
+                        <th>Annonce</th>
                         <th>Description</th>
                         <th>Note</th>
+                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for comment in comments %}
                         <tr>
                             <td>{{ comment.id }}</td>
+                            <td>{{ comment.author.fullName }}</td>
+                            <td>{{ comment.ad.title }}</td>
                             <td>{{ comment.description }}</td>
                             <td>{{ comment.rating }}</td>
+                            <td>{{ comment.createdAt | date("d/m/Y") }}</td>
                             <td>
-                                <a href="#" class="btn btn-primary"><i class="fas fa-edit"></i></a>
-                                <a href="#" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                                <a href="{{ path('admin_comments_delete', {'id': comment.id}) }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                     {% endfor %}

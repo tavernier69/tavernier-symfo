@@ -81,12 +81,13 @@ class User implements UserInterface
     private $slug;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Ad", mappedBy="author")
+     * @ORM\OneToMany(targetEntity="App\Entity\Ad", mappedBy="author", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     private $ads;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Role", mappedBy="users")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $userRoles;
 
