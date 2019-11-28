@@ -1,23 +1,34 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Modification du profil utilisateur{% endblock %}
+{% block title %}Modification du profil utilisateur
+{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>Modification du profil</h1>
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
-        {{ form_end(form) }}
-    </div>
-    
+
+	<pre>
+    {{ dump(nameFile) }}
+</pre>
+	<div class="container">
+		<input type="hidden" class="chield" name="" value="{{ nameFile }}">
+
+		<h1>Modification du profil</h1>
+		{{ form_start(form) }}
+		{{ form_widget(form) }}
+		<button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+		{{ form_end(form) }}
+	</div>
+
 {% endblock %}
 
 {% block javascripts %}
-<script>
-    $(document).on('change', '.custom-file-input', function () {
-        let fileName = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
-        $(this).parent('.custom-file').find('.custom-file-label').text(fileName);
-    });
-</script>
+	<script>
+		$(document).ready(function () {
+const chield_pict = $(".chield").val();
+$('.custom-file-label').text(chield_pict);
+$(document).on('change', '.custom-file-input', function () {
+let fileName = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+$(this).parent('.custom-file').find('.custom-file-label').text(fileName);
+});
+});
+	</script>
 {% endblock  %}

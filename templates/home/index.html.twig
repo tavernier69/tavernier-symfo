@@ -3,65 +3,21 @@
 {% block title %}Bienvenue sur le site de news de votre région{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="jumbotron mt-3">
-            <h1 class="display-3">Infos de dernieres minutes</h1>
-            <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-            <hr class="my-4">
-            <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-            <p class="lead">
-                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-            </p>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card bg-light mb-3">
-                    <div class="card-header text-center">
-                        Titre de l'article
-                        <small>Pas encore noté</small>
-                    </div>
-                    <img style="height: 200px; width: 100%; display: block;" src="http://placehold.it/1000x400" alt="Image de l'article">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Titre de l'article</h4>
-                        </div>
-                        <p class="card-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sit pariatur rerum hic, blanditiis veniam et consectetur error dolor! Veniam, deserunt?</p>
-                        <a href="#" class="btn btn-secondary">Lire l'article</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-light mb-3">
-                    <div class="card-header text-center">
-                        Titre de l'article
-                        <small>Pas encore noté</small>
-                    </div>
-                    <img style="height: 200px; width: 100%; display: block;" src="http://placehold.it/1000x400" alt="Image de l'article">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Titre de l'article</h4>
-                        </div>
-                        <p class="card-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sit pariatur rerum hic, blanditiis veniam et consectetur error dolor! Veniam, deserunt?</p>
-                        <a href="#" class="btn btn-secondary">Lire l'article</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-light mb-3">
-                    <div class="card-header text-center">
-                        Titre de l'article
-                        <small>Pas encore noté</small>
-                    </div>
-                    <img style="height: 200px; width: 100%; display: block;" src="http://placehold.it/1000x400" alt="Image de l'article">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Titre de l'article</h4>
-                        </div>
-                        <p class="card-text">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sit pariatur rerum hic, blanditiis veniam et consectetur error dolor! Veniam, deserunt?</p>
-                        <a href="#" class="btn btn-secondary">Lire l'article</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <div class="jumbotron mt-3">
+        <h1 class="display-3">Infos de dernieres minutes</h1>
+        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to
+            featured content or information.</p>
+        <hr class="my-4">
+        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+        </p>
     </div>
+    <div class="row">
+        {% for ad in ads %}
+        {% include 'ad/_ad.html.twig' %}
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

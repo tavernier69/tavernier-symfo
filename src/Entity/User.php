@@ -47,7 +47,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(message="Veuillez donner une URL valide pour votre avatar")
      */
     private $picture;
 
@@ -96,7 +95,8 @@ class User implements UserInterface
      */
     private $comments;
 
-    public function getFullName(){
+    public function getFullName()
+    {
         return "{$this->firstName} {$this->lastName}";
     }
 
@@ -246,33 +246,39 @@ class User implements UserInterface
      * 
      * @return void
      */
-    public function initializeSlug(){
-        if(empty($this->slug)){
+    public function initializeSlug()
+    {
+        if (empty($this->slug)) {
             $slugify = new Slugify();
-            $this->slug = $slugify->slugify($this->firstName.''.$this->lastName);
+            $this->slug = $slugify->slugify($this->firstName . '' . $this->lastName);
         }
     }
 
-    public function getRoles() {
-        
-        $roles = $this->userRoles->map(function($role){
+    public function getRoles()
+    {
+
+        $roles = $this->userRoles->map(function ($role) {
             return $role->getTitle();
         })->toArray();
         $roles[] = 'ROLE_USER';
-             return $roles;
+        return $roles;
     }
 
-    public function getPassword(){
+    public function getPassword()
+    {
         return $this->hash;
     }
 
-    public function getSalt(){}
+    public function getSalt()
+    { }
 
-    public function getUsername(){
+    public function getUsername()
+    {
         return $this->email;
     }
 
-    public function eraseCredentials(){}
+    public function eraseCredentials()
+    { }
 
     /**
      * @return Collection|Role[]

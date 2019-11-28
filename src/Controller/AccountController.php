@@ -11,7 +11,9 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -42,9 +44,8 @@ class AccountController extends AbstractController
      *
      * @return void
      */
-    public function logout(){
-
-    }
+    public function logout()
+    { }
 
 
     /**
@@ -53,7 +54,8 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function register(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $encoder){
+    public function register(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $encoder)
+    {
 
         $user = new User();
 
@@ -61,14 +63,14 @@ class AccountController extends AbstractController
 
         $form->handlerequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
-        $hash = $encoder->encodePassword($user, $user->getHash());
-        $file = $form['picture']->getData();
-        $name_file = $file->getClientOriginalName();
-        $file->move($this->getParameter('picture_directory'), $name_file);
-        $user->setPicture('images/'.$name_file);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hash = $encoder->encodePassword($user, $user->getHash());
+            $file = $form['picture']->getData();
+            $name_file = $file->getClientOriginalName();
+            $file->move($this->getParameter('picture_directory'), $name_file);
+            $user->setPicture($name_file);
 
-        $user->setHash($hash);
+            $user->setHash($hash);
 
             $manager->persist($user);
             $manager->flush();
@@ -94,21 +96,33 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function profile(Request $request, ObjectManager $manager){
+    public function profile(Request $request, ObjectManager $manager)
+    {
 
         $user = $this->getUser();
+        $name_file = $user->getPicture();
 
         $form = $this->createForm(AccountType::class, $user);
 
         $form->handleRequest($request);
         $directory = $this->getParameter('path_directory');
-        if($form->isSubmitted() && $form->isValid()){
-            $file = $form['picture']->getData();
-            $name_file = $file->getClientOriginalName();
-            $file->move($this->getParameter('picture_directory'), $name_file);
-            $user->setPicture('images/'.$name_file);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form['picture']->getData() != null) {
+                dump("ici");
+                $file = $form['picture']->getData();
+                $name_file = $file->getClientOriginalName();
+                $file->move($this->getParameter('picture_directory'), $name_file);
+                $user->setPicture($name_file);
+            } else {
+                dump("pas changé");
+                new File($this->getParameter('picture_directory') . "/" . $name_file);
+                $user->setPicture($name_file);
+            }
+
             $manager->persist($user);
             $manager->flush();
+
+
 
             $this->addFlash(
                 'success',
@@ -118,9 +132,9 @@ class AccountController extends AbstractController
 
         return $this->render('account/profile.html.twig', [
             'path_pict' => $directory,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'nameFile' => $name_file
         ]);
-
     }
 
     /**
@@ -130,7 +144,8 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function updatePassword(Request $request, UserPasswordEncoderInterface $encoder, ObjectManager $manager){
+    public function updatePassword(Request $request, UserPasswordEncoderInterface $encoder, ObjectManager $manager)
+    {
 
         $passwordUpdate = new PasswordUpdate();
 
@@ -138,8 +153,8 @@ class AccountController extends AbstractController
         $form = $this->createForm(PasswordUpdateType::class, $passwordUpdate);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
-            if(!password_verify($passwordUpdate->getOldPassword(), $user->getHash())){
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!password_verify($passwordUpdate->getOldPassword(), $user->getHash())) {
                 $form->get('oldPassword')->addError(new FormError("Le mot de passe que vous avez tapé n'est pas votre mot de passe actuel"));
             } else {
                 $newPassword = $passwordUpdate->getNewPassword();
@@ -154,7 +169,6 @@ class AccountController extends AbstractController
                 );
                 return $this->redirectToRoute('homepage');
             }
-            
         }
 
         return $this->render('account/password.html.twig', [
@@ -171,7 +185,8 @@ class AccountController extends AbstractController
      * 
      * @return Response
      */
-    public function myAccount(){
+    public function myAccount()
+    {
         return $this->render('user/index.html.twig', [
             'user' => $this->getUser()
         ]);

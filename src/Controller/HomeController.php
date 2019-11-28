@@ -2,27 +2,19 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\AdRepository;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="homepage")
      */
-    public function index()
+    public function index(AdRepository $repo)
     {
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
-        ]);
-    }
-
-    /**
-     * @Route("/hello/{name}", name="hello")
-     */
-    public function hello ($name = "anonyme"){
-        return $this->render('home/hello.html.twig', [
-            'name' => $name
+            'ads' => $repo->findLast(),
         ]);
     }
 }
