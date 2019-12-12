@@ -8,9 +8,11 @@ use App\Entity\Image;
 use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Repository\AdRepository;
+use App\Repository\RegionsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -20,14 +22,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdController extends AbstractController
 {
+
     /**
      * @Route("/ads", name="ads_index")
      */
-    public function index(AdRepository $repo, SessionInterface $session )
+    public function index(AdRepository $repo, SessionInterface $session, RegionsRepository $repoRegion)
     {
         $ads = $repo->findAll();
         return $this->render('ad/index.html.twig', [
             'ads' => $ads,
+            'regions' => $repoRegion->findAll()
         ]);
     }
 
@@ -39,15 +43,24 @@ class AdController extends AbstractController
      * 
      * @return Response
      */
-    public function create(Request $request, ObjectManager $manager){
+    public function create(Request $request, EntityManagerInterface $manager, RegionsRepository $repoRegion)
+    {
 
         $ad = new Ad();
 
         $form = $this->createForm(AdType::class, $ad);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form['coverImage']->getData();
+            $name_file = $file->getClientOriginalName();
+            $file->move($this->getParameter('article_image_directory') . '/' . $form['title']->getData() . '/coverImage', $name_file);
+            $ad->setCoverImage($name_file);
+
             foreach ($ad->getImages() as $image) {
+                $name_pict = $image->getCaption();
+                $file->move($this->getParameter('article_image_directory') . '/' . $form['title']->getData(), $name_pict);
+
                 $image->setAd($ad);
                 $manager->persist($image);
             }
@@ -68,7 +81,8 @@ class AdController extends AbstractController
         }
 
         return $this->render('ad/create.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'regions' => $repoRegion->findAll()
         ]);
     }
 
@@ -81,13 +95,23 @@ class AdController extends AbstractController
      *
      * @return Response
      */
-    public function edit(Ad $ad, Request $request, ObjectManager $manager){
+    public function edit(Ad $ad, EntityManagerInterface $manager, Request $request, RegionsRepository $repoRegion)
+    {
 
+        $name_file = $ad->getCoverImage();
         $form = $this->createForm(AdType::class, $ad);
-
         $form->handleRequest($request);
+        dump($form['title']->getData());
+        if ($form->isSubmitted() && $form->isValid()) {
 
-        if($form->isSubmitted() && $form->isValid()){
+            if ($form['coverImage']->getData() !== null || $this->getParameter('article_image_directory') . '/' . $form['title']->getData() . '/coverImage' !== null) {
+                $file = $form['coverImage']->getData();
+                $name_file = $file->getClientOriginalName();
+                $file->move($this->getParameter('article_image_directory') . '/' . $form['title']->getData() . '/coverImage', $name_file);
+            } else {
+                new File($this->getParameter('article_image_directory') . '/' . $form['title']->getData() . '/coverImage' . "/" . $name_file);
+            }
+            $ad->setCoverImage($name_file);
             foreach ($ad->getImages() as $image) {
                 $image->setAd($ad);
                 $manager->persist($image);
@@ -107,8 +131,10 @@ class AdController extends AbstractController
         }
         return $this->render('ad/edit.html.twig', [
             'form' => $form->createView(),
-            'ad' => $ad
-            ]);
+            'ad' => $ad,
+            'nameFile' => $name_file,
+            'regions' => $repoRegion->findAll()
+        ]);
     }
 
     /**
@@ -117,10 +143,11 @@ class AdController extends AbstractController
      * @Route("/ads/{slug}", name="ads_show")
      * @param Ad $ad
      * @param Request $request
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @return Response
      */
-    public function show($slug, Ad $ad, Request $request, ObjectManager $manager){
+    public function show($slug, Ad $ad, Request $request, EntityManagerInterface $manager, RegionsRepository $repoRegion)
+    {
 
         $comment = new Comment();
 
@@ -128,9 +155,9 @@ class AdController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $comment->setAd($ad)
-                    ->setAuthor($this->getUser());
+                ->setAuthor($this->getUser());
 
             $manager->persist($comment);
             $manager->flush();
@@ -144,7 +171,8 @@ class AdController extends AbstractController
         // $ad = $repo->findOneBySlug($slug);
         return $this->render('ad/show.html.twig', [
             'ad'    => $ad,
-            'form'  => $form->createView()
+            'form'  => $form->createView(),
+            'regions' => $repoRegion->findAll()
         ]);
     }
 
@@ -152,14 +180,15 @@ class AdController extends AbstractController
      * Permet de supprimer l'annonce
      *
      * @param Ad $ad
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * 
      * @Route("/ads/{slug}/delete", name="ads_delete")
      * @Security("is_granted('ROLE_USER') and user == ad.getAuthor()", message="Vous n'avez pas le droit d'acceder à cette ressource")
      * 
      * @return void
      */
-    public function delete(Ad $ad, ObjectManager $manager){
+    public function delete(Ad $ad, EntityManagerInterface $manager)
+    {
         $manager->remove($ad);
         $manager->flush();
 
@@ -169,7 +198,5 @@ class AdController extends AbstractController
         );
 
         return $this->redirectToRoute("ads_index");
-
     }
-    
 }

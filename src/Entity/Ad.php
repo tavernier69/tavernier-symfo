@@ -51,7 +51,6 @@ class Ad
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Url()
      */
     private $coverImage;
 
@@ -71,6 +70,11 @@ class Ad
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="ad", orphanRemoval=true)
      */
     private $comments;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Regions", inversedBy="article")
+     */
+    private $regions;
 
     public function __construct()
     {
@@ -163,7 +167,7 @@ class Ad
         return $this->coverImage;
     }
 
-    public function setCoverImage(string $coverImage): self
+    public function setCoverImage(string $coverImage = null): self
     {
         $this->coverImage = $coverImage;
 
@@ -240,6 +244,18 @@ class Ad
                 $comment->setAd(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRegions(): ?Regions
+    {
+        return $this->regions;
+    }
+
+    public function setRegions(?Regions $regions): self
+    {
+        $this->regions = $regions;
 
         return $this;
     }

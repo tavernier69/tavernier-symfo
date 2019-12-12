@@ -1,110 +1,118 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ ad.title }}{% endblock %}
+{% block title %}
+	{{ ad.title }}
+{% endblock %}
 
 {% block body %}
 
-    <div class="article-title" style="background-image: url( {{ ad.coverImage }} ); height: 200px" >
-        <div class="container">
-            <h1 class="text-center">{{ ad.title }}</h1>
-            <p class="text-center">{{ ad.introduction }}</p>
-            {% if app.user and app.user == ad.author %}
-                <a href="{{ path('ads_edit', {'slug': ad.slug}) }}" class="btn btn-primary">Modifier l'annonce</a>
-                <a href="{{ path('ads_delete', {'slug': ad.slug}) }}" class="btn btn-danger" onclick="return confirm(`Êtes vous sur de vouloir supprimer l'annonce?`)" >Supprimer l'annonce</a>
-            {% endif %}
-            
-        </div>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 mb-3">
-                {{ ad.description | raw }}
+	<div class="article-title" style="background-image:url('/images/articles/{{ad.title}}/coverImage/{{ad.coverImage}}'); height: 200px">
+		<div class="container">
+			<h1 class="text-center">{{ ad.title }}</h1>
+			<p class="text-center">{{ ad.introduction }}</p>
+			{% if app.user and app.user == ad.author %}
+				<a href="{{ path('ads_edit', {'slug': ad.slug}) }}" class="btn btn-primary">Modifier l'annonce</a>
+				<a href="{{ path('ads_delete', {'slug': ad.slug}) }}" class="btn btn-danger" onclick="return confirm(`Êtes vous sur de vouloir supprimer l'annonce?`)">Supprimer l'annonce</a>
+			{% endif %}
 
-                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        {% for image in ad.images %}
-                        <li data-target="#carouselExampleIndicators" data-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active"{% endif %}></li>
-                        {% endfor %}
-                    </ol>
-                    <div class="carousel-inner">
-                        {% for image in ad.images %}
-                        <div class="carousel-item {% if loop.first %} active {% endif %}">
-                            <img class="d-block w-100" src="{{ image.url }}" alt="{{image.caption}}">
-                            <div class="carousel-caption d-none d-md-block">
-                                <h5>{{ ad.title }}</h5>
-                                <p>{{ image.caption }}</p>
-                            </div>
-                        </div>
-                        
-                        {% endfor %}
-                    </div>
-                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
-                <hr>
-                {% if ad.comments | length > 0 %}
-                    <h2>Commentaires</h2>
-                    <div class="alert alert-info">
-                        <h4 class="alert-heading text-center">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    Note globale donnée par nos utilisateurs
-                                </div>
-                                <div class="col">
-                                    {% include "partials/rating.html.twig" with {'rating': ad.avgRatings} %}
-                                    <br>
-                                    <small>{{ ad.comments | length }} avis</small>
-                                </div>
-                            </div>
-                        </h4>
-                    </div>
-                    {% for comment in ad.comments %}
-                        <div class="bg-light rounded mb-3 py-3 px-3">
-                            <strong>{{ comment.author.fullName }}</strong>
-                            <blockquote>{{ comment.description }}</blockquote>
-                            <strong>note donnée par: {{ comment.author.fullName }}</strong>
-                            
-                            {% include "partials/rating.html.twig" with {'rating': comment.rating} %}
-                            
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <h2>Cette annonce n'a pas encore reçu de commentaire</h2>
-                {% endif %}
-                <br>
-                <div class="alert alert-light">
-                    <h2 class="alert-heading">Poster un commentaire:</h2>
-                    {% if app.user %}
-                        {{ form_start(form) }}
-                        {{ form_widget(form) }}
-                        <button type="submit" class="btn btn-success">Confirmer</button>
-                        {{ form_end(form) }}
-                    {% else %}
-                    <h4 class="alert alert-heading"></h4> Vous devez être connecté pour poster un commentaire
-                    {% endif %}
-                    
-                </div>
-            </div>
-            <div class="col">
-                {% set a = ad.author %}
-                <div class="row mb-3 align-items-center">
-                    <div class="col-3">
-                        <img src="{{ a.picture }}" class="avatar avatar-medium" alt="Avatar de {{ a.fullName }}">
-                    </div>
-                    <div class="col">
-                        <h3><a href="{{ path('user_show', {slug: a.slug}) }}">{{ a.fullName }}</a></h3>
-                        <span class="badge badge-primary">{{ a.ads | length }} articles</span>
-                    </div>
-                </div>
-                {{ a.text | raw }}
-            </div>
-        </div>
-    </div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 mb-3">
+				{{ ad.description | raw }}
+
+				<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+					<ol class="carousel-indicators">
+						{% for image in ad.images %}
+							<li data-target="#carouselExampleIndicators" data-slide-to="{{ loop.index0 }}" {% if loop.first %} class="active" {% endif %}></li>
+						{% endfor %}
+					</ol>
+					<div class="carousel-inner">
+						{% for image in ad.images %}
+							<div class="carousel-item {% if loop.first %} active {% endif %}">
+								<img class="d-block w-100" src="{{ image.url }}" alt="{{image.caption}}">
+								<div class="carousel-caption d-none d-md-block">
+									<h5>{{ ad.title }}</h5>
+									<p>{{ image.caption }}</p>
+								</div>
+							</div>
+
+						{% endfor %}
+					</div>
+					<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+					</a>
+					<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+					</a>
+				</div>
+				<hr>
+				{% if ad.comments | length > 0 %}
+					<h2>Commentaires</h2>
+					<div class="alert alert-info">
+						<h4 class="alert-heading text-center">
+							<div class="row align-items-center">
+								<div class="col">
+									Note globale donnée par nos utilisateurs
+								</div>
+								<div class="col">
+									{% include "partials/rating.html.twig" with {'rating': ad.avgRatings} %}
+									<br>
+									<small>{{ ad.comments | length }}
+										avis</small>
+								</div>
+							</div>
+						</h4>
+					</div>
+					{% for comment in ad.comments %}
+						<div class="bg-light rounded mb-3 py-3 px-3">
+							<strong>{{ comment.author.fullName }}</strong>
+							<blockquote>{{ comment.description }}</blockquote>
+							<strong>note donnée par:
+								{{ comment.author.fullName }}</strong>
+
+							{% include "partials/rating.html.twig" with {'rating': comment.rating} %}
+
+						</div>
+					{% endfor %}
+				{% else %}
+					<h2>Cette annonce n'a pas encore reçu de commentaire</h2>
+				{% endif %}
+				<br>
+				<div class="alert alert-light">
+					<h2 class="alert-heading">Poster un commentaire:</h2>
+					{% if app.user %}
+						{{ form_start(form) }}
+						{{ form_widget(form) }}
+						<button type="submit" class="btn btn-success">Confirmer</button>
+						{{ form_end(form) }}
+					{% else %}
+						<h4 class="alert alert-heading"></h4>
+						Vous devez être connecté pour poster un commentaire
+					{% endif %}
+
+				</div>
+			</div>
+			<div class="col">
+				{% set a = ad.author %}
+				<div class="row mb-3 align-items-center">
+					<div class="col-3">
+						<img src="/images/{{ a.picture }}" class="avatar avatar-medium" alt="Avatar de {{ a.fullName }}">
+					</div>
+					<div class="col">
+						<h3>
+							<a href="{{ path('user_show', {slug: a.slug}) }}">{{ a.fullName }}</a>
+						</h3>
+						<span class="badge badge-primary">{{ a.ads | length }}
+							articles</span>
+					</div>
+				</div>
+				{{ a.text | raw }}
+			</div>
+		</div>
+	</div>
 
 {% endblock %}

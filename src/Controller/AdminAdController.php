@@ -7,8 +7,8 @@ use App\Form\AdType;
 use App\Entity\Comment;
 use App\Repository\AdRepository;
 use App\Repository\CommentRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,13 +30,14 @@ class AdminAdController extends AbstractController
      * Permet de modifier une annonce
      * @Route("/admin/ads/{id}/edit", name="admin_ads_edit")
      */
-    public function edit (Ad $ad, Request $request, ObjectManager $manager){
+    public function edit(Ad $ad, Request $request, EntityManagerInterface $manager)
+    {
 
         $form = $this->createForm(AdType::class, $ad);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $manager->persist($ad);
             $manager->flush();
 
@@ -46,7 +47,7 @@ class AdminAdController extends AbstractController
             );
         }
 
-        return $this->render('admin/ad/edit.html.twig',[
+        return $this->render('admin/ad/edit.html.twig', [
             'form' => $form->createView(),
             'ad' => $ad
         ]);
@@ -57,12 +58,13 @@ class AdminAdController extends AbstractController
      * Permet d'effacer une annonce
      *
      * @param Ad $ad
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * 
      * @return void
-    * @Route("/admin/ads/{id}/delete", name="admin_ads_delete")
+     * @Route("/admin/ads/{id}/delete", name="admin_ads_delete")
      */
-    public function delete(Ad $ad, ObjectManager $manager){
+    public function delete(Ad $ad, EntityManagerInterface $manager)
+    {
 
         $manager->remove($ad);
         $manager->flush();
@@ -88,12 +90,13 @@ class AdminAdController extends AbstractController
      * Permet d'effacer un commentaire
      *
      * @param Ad $ad
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * 
      * @return void
-    * @Route("/admin/comments/{id}/delete", name="admin_comments_delete")
+     * @Route("/admin/comments/{id}/delete", name="admin_comments_delete")
      */
-    public function delete_comment(Comment $comment, ObjectManager $manager){
+    public function delete_comment(Comment $comment, EntityManagerInterface $manager)
+    {
 
         $manager->remove($comment);
         $manager->flush();
@@ -126,7 +129,6 @@ class AdminAdController extends AbstractController
      * 
      * @Route("/admin/logout", name="admin_account_logout")
      */
-    public function logout(){
-
-    }
+    public function logout()
+    { }
 }

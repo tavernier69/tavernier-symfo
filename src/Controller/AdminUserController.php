@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -24,12 +24,13 @@ class AdminUserController extends AbstractController
      * Permet d'effacer un utilisateur
      *
      * @param User $user
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * 
      * @return void
-    * @Route("/admin/users/{id}/delete", name="admin_users_delete")
+     * @Route("/admin/users/{id}/delete", name="admin_users_delete")
      */
-    public function delete_user(User $user, ObjectManager $manager){
+    public function delete_user(User $user, EntityManagerInterface $manager)
+    {
 
         $manager->remove($user);
         $manager->flush();

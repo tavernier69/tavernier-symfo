@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ region.name }}
+{% endblock %}
+
+{% block body %}
+	<h1 class="text-center mb-3 my-3">{{ region.name }}</h1>
+	<div class="container">
+		
+            {% if ads |length > 0 %}
+            <div class="row">
+                {% for ad in ads %}
+                    {% include 'ad/_ad.html.twig' %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-danger">
+                 <h1 class="alert-heading text-center mb-3 my-3">Aucun article dans cette région</h1>
+            </div>
+            {% endif %}
+	</div>
+{% endblock %}

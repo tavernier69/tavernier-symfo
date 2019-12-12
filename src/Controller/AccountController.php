@@ -8,8 +8,8 @@ use App\Entity\PasswordUpdate;
 use App\Form\RegistrationType;
 use App\Form\PasswordUpdateType;
 use Symfony\Component\Form\FormError;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
@@ -54,7 +54,7 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function register(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $encoder)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder)
     {
 
         $user = new User();
@@ -96,7 +96,7 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function profile(Request $request, ObjectManager $manager)
+    public function profile(Request $request, EntityManagerInterface $manager)
     {
 
         $user = $this->getUser();
@@ -108,13 +108,11 @@ class AccountController extends AbstractController
         $directory = $this->getParameter('path_directory');
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form['picture']->getData() != null) {
-                dump("ici");
                 $file = $form['picture']->getData();
                 $name_file = $file->getClientOriginalName();
                 $file->move($this->getParameter('picture_directory'), $name_file);
                 $user->setPicture($name_file);
             } else {
-                dump("pas changé");
                 new File($this->getParameter('picture_directory') . "/" . $name_file);
                 $user->setPicture($name_file);
             }
@@ -144,7 +142,7 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function updatePassword(Request $request, UserPasswordEncoderInterface $encoder, ObjectManager $manager)
+    public function updatePassword(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
     {
 
         $passwordUpdate = new PasswordUpdate();

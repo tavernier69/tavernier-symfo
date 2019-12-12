@@ -1,23 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Bienvenue sur le site de news de votre région{% endblock %}
+{% block title %}Bienvenue sur le site de news de votre région
+{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="jumbotron mt-3">
-        <h1 class="display-3">Infos de dernieres minutes</h1>
-        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to
-            featured content or information.</p>
-        <hr class="my-4">
-        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-        <p class="lead">
-            <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-        </p>
-    </div>
-    <div class="row">
-        {% for ad in ads %}
-        {% include 'ad/_ad.html.twig' %}
-        {% endfor %}
-    </div>
-</div>
+	<div class="">
+		<div class="">
+			<h1 class="display-3 text-center mb-5 mt-5">{% trans into 'fr' %}title home{% endtrans %}
+			</h1>
+		</disv>
+		<div class="container">
+			<div class="row">
+				{% for ad in ads %}
+					{% include 'ad/_ad.html.twig' %}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
 {% endblock %}

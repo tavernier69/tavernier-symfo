@@ -20,29 +20,25 @@ class AdRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return Ad[] Returns an array of Ad objects
-    */
-    
+     * @return Ad[] Returns an array of Ad objects
+     */
+
     public function findLast()
     {
         return $this->createQueryBuilder('a')
             ->orderBy('a.id', 'ASC')
             ->setMaxResults(6)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    
 
-    /*
-    public function findOneBySomeField($value): ?Ad
+
+    public function findByRegion($value): ?Ad
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
+            ->andWhere('a.regionsId = :val')
             ->setParameter('val', $value)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
 }

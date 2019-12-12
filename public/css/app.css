@@ -38,3 +38,8 @@ div.carousel-caption{
 span.rating i{
     color: goldenrod;
 }
+
+footer{
+    position: absolute;
+    width: 100%;
+}
