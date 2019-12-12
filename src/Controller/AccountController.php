@@ -7,6 +7,7 @@ use App\Form\AccountType;
 use App\Entity\PasswordUpdate;
 use App\Form\RegistrationType;
 use App\Form\PasswordUpdateType;
+use App\Repository\RegionsRepository;
 use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,13 +28,14 @@ class AccountController extends AbstractController
      * 
      * @return Response
      */
-    public function login(AuthenticationUtils $utils)
+    public function login(AuthenticationUtils $utils, RegionsRepository $repoRegion)
     {
         $error = $utils->getLastAuthenticationError();
         $username = $utils->getLastUsername();
         return $this->render('account/login.html.twig', [
             'hasError' => $error !== null,
-            'username' => $username
+            'username' => $username,
+            'regions' => $repoRegion->findAll()
         ]);
     }
 
@@ -96,7 +98,7 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function profile(Request $request, EntityManagerInterface $manager)
+    public function profile(Request $request, EntityManagerInterface $manager, RegionsRepository $repoRegion)
     {
 
         $user = $this->getUser();
@@ -131,7 +133,8 @@ class AccountController extends AbstractController
         return $this->render('account/profile.html.twig', [
             'path_pict' => $directory,
             'form' => $form->createView(),
-            'nameFile' => $name_file
+            'nameFile' => $name_file,
+            'regions' => $repoRegion->findAll()
         ]);
     }
 
@@ -142,7 +145,7 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function updatePassword(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
+    public function updatePassword(Request $request, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager, RegionsRepository $repoRegion)
     {
 
         $passwordUpdate = new PasswordUpdate();
@@ -170,7 +173,8 @@ class AccountController extends AbstractController
         }
 
         return $this->render('account/password.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'regions' => $repoRegion->findAll()
         ]);
     }
 
@@ -183,10 +187,11 @@ class AccountController extends AbstractController
      * 
      * @return Response
      */
-    public function myAccount()
+    public function myAccount(RegionsRepository $repoRegion)
     {
         return $this->render('user/index.html.twig', [
-            'user' => $this->getUser()
+            'user' => $this->getUser(),
+            'regions' => $repoRegion->findAll()
         ]);
     }
 }

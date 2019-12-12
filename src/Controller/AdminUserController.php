@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\RegionsRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,10 +14,11 @@ class AdminUserController extends AbstractController
     /**
      * @Route("/admin/user", name="admin_users_index")
      */
-    public function index(UserRepository $repo)
+    public function index(UserRepository $repo, RegionsRepository $repoRegion)
     {
         return $this->render('admin/user/index.html.twig', [
             'users' => $repo->findAll(),
+            'regions' => $repoRegion->findAll()
         ]);
     }
 

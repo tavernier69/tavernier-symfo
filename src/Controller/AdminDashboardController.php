@@ -2,16 +2,28 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\StatsService;
+use App\Repository\RegionsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdminDashboardController extends AbstractController
 {
     /**
      * @Route("/admin", name="admin_dashboard")
      */
-    public function index()
+    public function index(RegionsRepository $repoRegion, EntityManagerInterface $manager, StatsService $statsService)
     {
-        return $this->render('admin/dashboard/index.html.twig');
+        $stats = $statsService->getStats();
+
+        $bestAds = $statsService->getAdsStats('DESC');
+        $worstAds = $statsService->getAdsStats('ASC');
+
+        return $this->render('admin/dashboard/index.html.twig', [
+            'stats' => $stats,
+            'bestAds' => $bestAds,
+            'worstAds' => $worstAds
+        ]);
     }
 }
