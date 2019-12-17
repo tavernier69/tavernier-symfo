@@ -16,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class AdType extends ApplicationType
 {
@@ -24,7 +25,7 @@ class AdType extends ApplicationType
     {
         $builder
             ->add('title', TextType::class, $this->getConfiguration('Titre', 'Entrer un titre pour l\'article'))
-            ->add('slug', TextType::class, $this->getConfiguration('Url', 'Adresse web (Automatique)', ['required' => false]))
+            ->add('slug', HiddenType::class, $this->getConfiguration('Url', 'Adresse web (Automatique)', ['required' => false]))
             ->add('introduction', TextType::class, $this->getConfiguration('Introduction', 'Entrer une introduction'))
             ->add('description', TextareaType::class, $this->getConfiguration('Contenu', 'Entrer du contenu pour l\'article'))
             ->add('coverImage', FileType::class, array('data_class' => null, 'required' => false, 'label' => 'Image de couverture'))

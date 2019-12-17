@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Cocur\Slugify\Slugify;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -94,6 +95,11 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author", orphanRemoval=true)
      */
     private $comments;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $creationDate;
 
     public function getFullName()
     {
@@ -335,6 +341,18 @@ class User implements UserInterface
                 $comment->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreationDate(): ?int
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate(int $creationDate): self
+    {
+        $this->creationDate = $creationDate;
 
         return $this;
     }

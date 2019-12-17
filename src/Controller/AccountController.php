@@ -8,6 +8,7 @@ use App\Entity\PasswordUpdate;
 use App\Form\RegistrationType;
 use App\Form\PasswordUpdateType;
 use App\Repository\RegionsRepository;
+use DateTime;
 use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,6 +72,7 @@ class AccountController extends AbstractController
             $name_file = $file->getClientOriginalName();
             $file->move($this->getParameter('picture_directory'), $name_file);
             $user->setPicture($name_file);
+            $user->setCreationDate(time());
 
             $user->setHash($hash);
 
@@ -118,6 +120,7 @@ class AccountController extends AbstractController
                 new File($this->getParameter('picture_directory') . "/" . $name_file);
                 $user->setPicture($name_file);
             }
+            $user->setCreationDate(time());
 
             $manager->persist($user);
             $manager->flush();

@@ -26,7 +26,7 @@ class AdRepository extends ServiceEntityRepository
     public function findLast()
     {
         return $this->createQueryBuilder('a')
-            ->orderBy('a.id', 'ASC')
+            ->orderBy('a.id', 'DESC')
             ->setMaxResults(6)
             ->getQuery()
             ->getResult();

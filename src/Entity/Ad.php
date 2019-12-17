@@ -76,6 +76,11 @@ class Ad
      */
     private $regions;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $creationDate;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -90,23 +95,32 @@ class Ad
      * 
      * @return void
      */
-    public function initializeSlug(){
-        if(empty($this->slug)){
+    public function initializeSlug()
+    {
+        if (empty($this->slug)) {
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->title);
         }
     }
 
-    public function getAvgRatings(){
-        $sum = array_reduce($this->comments->toArray(), function($total, $comment){
+    public function getAvgRatings()
+    {
+        $sum = array_reduce($this->comments->toArray(), function ($total, $comment) {
             return $total + $comment->getRating();
         }, 0);
 
-        if(count($this->comments) > 0){
+        if (count($this->comments) > 0) {
             return $sum / count($this->comments);
         } else {
             return 0;
         }
+    }
+
+    public function strrevpos($instr, $needle)
+    {
+        $rev_pos = strpos(strrev($instr), strrev($needle));
+        if ($rev_pos === false) return false;
+        else return strlen($instr) - $rev_pos - strlen($needle);
     }
 
     public function getId(): ?int
@@ -256,6 +270,18 @@ class Ad
     public function setRegions(?Regions $regions): self
     {
         $this->regions = $regions;
+
+        return $this;
+    }
+
+    public function getCreationDate(): ?int
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate(int $creationDate): self
+    {
+        $this->creationDate = $creationDate;
 
         return $this;
     }

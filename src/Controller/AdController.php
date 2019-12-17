@@ -7,6 +7,7 @@ use App\Form\AdType;
 use App\Entity\Image;
 use App\Entity\Comment;
 use App\Form\CommentType;
+use App\Service\MailService;
 use App\Repository\AdRepository;
 use App\Repository\RegionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,10 +44,11 @@ class AdController extends AbstractController
      * 
      * @return Response
      */
-    public function create(Request $request, EntityManagerInterface $manager, RegionsRepository $repoRegion)
+    public function create(Request $request, EntityManagerInterface $manager, RegionsRepository $repoRegion, MailService $mailService)
     {
 
         $ad = new Ad();
+        $user = $this->getUser();
 
         $form = $this->createForm(AdType::class, $ad);
 
@@ -54,18 +56,19 @@ class AdController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form['coverImage']->getData();
             $name_file = $file->getClientOriginalName();
-            $file->move($this->getParameter('article_image_directory') . '/' . $form['title']->getData() . '/coverImage', $name_file);
-            $ad->setCoverImage($name_file);
+            $file->move($this->getParameter('article_cover_image_directory') . '/' , $name_file);
 
+            $ad->setCoverImage($name_file);
             foreach ($ad->getImages() as $image) {
-                $name_pict = $image->getCaption();
-                $file->move($this->getParameter('article_image_directory') . '/' . $form['title']->getData(), $name_pict);
+                $name_pict = $image->getUrl();
+                $file->move($this->getParameter('article_image_directory') . '/' , $name_pict);
 
                 $image->setAd($ad);
                 $manager->persist($image);
             }
 
             $ad->setAuthor($this->getUser());
+            $ad->setCreationDate(time());
             //$manager = $this->getDoctrine()->getmanager();
             $manager->persist($ad);
             $manager->flush();
@@ -74,7 +77,8 @@ class AdController extends AbstractController
                 'success',
                 "L'article <strong> {$ad->getTitle()} </strong> a bien été enregistré"
             );
-
+            $path = $this->getParameter('article_image_directory').$ad->getSlug();
+            $mailService->send_mail($user->getEmail(), $user->getFirstName(), $user->getLastname(), $ad->getTitle(), $path);
             return $this->redirectToRoute('ads_show', [
                 'slug' => $ad->getSlug()
             ]);
@@ -101,18 +105,25 @@ class AdController extends AbstractController
         $name_file = $ad->getCoverImage();
         $form = $this->createForm(AdType::class, $ad);
         $form->handleRequest($request);
-        dump($form['title']->getData());
         if ($form->isSubmitted() && $form->isValid()) {
+            dump($form['coverImage']->getData()); die;
+            if ($form['coverImage']->getData() != null) {
 
-            if ($form['coverImage']->getData() !== null || $this->getParameter('article_image_directory') . '/' . $form['title']->getData() . '/coverImage' !== null) {
                 $file = $form['coverImage']->getData();
                 $name_file = $file->getClientOriginalName();
-                $file->move($this->getParameter('article_image_directory') . '/' . $form['title']->getData() . '/coverImage', $name_file);
+                $file->move($this->getParameter('article_cover_image_directory'). "/", $name_file);
             } else {
-                new File($this->getParameter('article_image_directory') . '/' . $form['title']->getData() . '/coverImage' . "/" . $name_file);
+                new File($this->getParameter('article_cover_image_directory'). "/" . $name_file);
             }
             $ad->setCoverImage($name_file);
+            foreach($form['images'] as $imgform){
+                dump($imgform->getData()); die;
+            }
+            
             foreach ($ad->getImages() as $image) {
+                $name_pict = $image;
+                
+                $file->move($this->getParameter('article_image_directory') . '/' , $name_pict);
                 $image->setAd($ad);
                 $manager->persist($image);
             }
@@ -132,7 +143,6 @@ class AdController extends AbstractController
         return $this->render('ad/edit.html.twig', [
             'form' => $form->createView(),
             'ad' => $ad,
-            'nameFile' => $name_file,
             'regions' => $repoRegion->findAll()
         ]);
     }
@@ -148,7 +158,8 @@ class AdController extends AbstractController
      */
     public function show($slug, Ad $ad, Request $request, EntityManagerInterface $manager, RegionsRepository $repoRegion)
     {
-
+        $title_article = substr($ad->getTitle(), 0, 20);
+        $title_article = str_replace(" ", "-", $title_article);
         $comment = new Comment();
 
         $form = $this->createForm(CommentType::class, $comment);

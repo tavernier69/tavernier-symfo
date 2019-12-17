@@ -20,7 +20,7 @@ class ImageType extends AbstractType
                     'placeholder' => 'Donner un titre pour l\'image'
                 ]
             ])
-            ->add('url', FileType::class, array('data_class' => null, 'required' => false), [
+            ->add('url', FileType::class, array('data_class' => null, 'required' => false, 'label' => 'Image de carousel'), [
                 'attr' => [
                     'placeholder' => 'Donner une adresse pour l\'image'
                 ]

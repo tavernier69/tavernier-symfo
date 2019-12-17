@@ -9,6 +9,8 @@
 		<input type="hidden" class="chield" name="" value="{{ nameFile }}">
 
 		<h1>Modification du profil</h1>
+		<p>(Derniere mise a jour le : {{ app.user.creationDate|date("d/m/Y à H:m") }})</p>
+		
 		{{ form_start(form) }}
 		{{ form_widget(form) }}
 		<button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
