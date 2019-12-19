@@ -15,6 +15,9 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <pre>
+                        
+                    </pre>
                     {% for user in users %}
                         <tr>
                             <td>{{ user.id }}</td>
@@ -23,6 +26,19 @@
                             <td>{{ user.email }}</td>
                             <td>
                                 <a href="{{ path('admin_users_delete', {'id': user.id}) }}" class="btn btn-danger"><i class="fas fa-trash"></i></a>
+                            </td>
+                            <td>
+                                {% for ro in role %}
+                                    {% if (ro.id == user.id) and (ro.title == 'ROLE_ADMIN') %}
+                                    <form action="{{ path('admin_users_remove_role_index', {'id': user.id}) }}" method="post">
+                                        <button type="submit" class="btn btn-primary">Enlever Admin</button>
+                                    </form>
+                                        {% elseif (ro.id == user.id) and (ro.title == null) %}
+                                        <form action="{{ path('admin_users_role_index', {'id': user.id}) }}" method="post">
+                                            <button type="submit" class="btn btn-primary">Ajouter Admin</button>
+                                        </form>
+                                    {% endif %}
+                                {% endfor %}
                             </td>
                         </tr>
                     {% endfor %}

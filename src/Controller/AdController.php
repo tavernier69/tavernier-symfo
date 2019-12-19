@@ -56,12 +56,13 @@ class AdController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form['coverImage']->getData();
             $name_file = $file->getClientOriginalName();
+
             $file->move($this->getParameter('article_cover_image_directory') . '/' , $name_file);
 
             $ad->setCoverImage($name_file);
             foreach ($ad->getImages() as $image) {
                 $name_pict = $image->getUrl();
-                $file->move($this->getParameter('article_image_directory') . '/' , $name_pict);
+                // $file->move($this->getParameter('article_image_directory') . '/' , $name_pict);
 
                 $image->setAd($ad);
                 $manager->persist($image);

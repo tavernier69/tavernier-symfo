@@ -82,7 +82,7 @@ public function __construct(UserPasswordEncoderInterface $encoder){
             $ad->setTitle($title)
                 ->setCoverImage($coverImage)
                 ->setIntroduction($introduction)
-                ->setContent($content)
+                ->setDescription($content)
                 ->setAuthor($user);
 
         for($j = 0; $j <= mt_rand(2, 5); $j++){

@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Image;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -20,7 +21,15 @@ class ImageType extends AbstractType
                     'placeholder' => 'Donner un titre pour l\'image'
                 ]
             ])
-            ->add('url', FileType::class, array('data_class' => null, 'required' => false, 'label' => 'Image de carousel'), [
+            ->add('url', FileType::class, array(
+                'data_class' => null,
+                 'required' => false,
+                  'label' => 'Image de carousel',
+                  'constraints' => array(
+                    new File(),
+                ),
+                  ),
+                   [
                 'attr' => [
                     'placeholder' => 'Donner une adresse pour l\'image'
                 ]
