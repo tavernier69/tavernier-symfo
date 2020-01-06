@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Tag;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
@@ -81,6 +82,11 @@ class Ad
      */
     private $creationDate;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Tag", inversedBy="article")
+     */
+    private $tags;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -96,10 +102,15 @@ class Ad
      * @return void
      */
     public function initializeSlug()
-    {
+    {   
+        $slugify = new Slugify();
+        if(!empty($this->title)){
+            $title = $slugify->slugify($this->title);
+        }
         if (empty($this->slug)) {
-            $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->title);
+        } else if($title != $this->slug){
+            $this->slug = $title;
         }
     }
 
@@ -282,6 +293,18 @@ class Ad
     public function setCreationDate(int $creationDate): self
     {
         $this->creationDate = $creationDate;
+
+        return $this;
+    }
+
+    public function getTags(): ?Tag
+    {
+        return $this->tags;
+    }
+
+    public function setTags(?Tag $tags): self
+    {
+        $this->tags = $tags;
 
         return $this;
     }

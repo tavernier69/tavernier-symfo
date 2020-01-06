@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\Ad;
 use App\Form\AdType;
 use App\Entity\Comment;
+use App\Service\MailService;
 use App\Repository\AdRepository;
 use App\Repository\CommentRepository;
+use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,14 +33,36 @@ class AdminAdController extends AbstractController
      * Permet de modifier une annonce
      * @Route("/admin/ads/{id}/edit", name="admin_ads_edit")
      */
-    public function edit(Ad $ad, Request $request, EntityManagerInterface $manager)
+    public function edit(Ad $ad, Request $request, EntityManagerInterface $manager, MailService $mailService, AdRepository $repo)
     {
-
+        $info_user = $repo->findUserByIdArticle($ad->getId());
+        foreach($info_user as $user){
+            $firstname = $user['u_firstName'];
+            $lastname = $user['u_lastName'];
+            $email = $user['u_email'];
+        }
         $form = $this->createForm(AdType::class, $ad);
-
+        $name_file = $ad->getCoverImage();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($form['coverImage']->getData() != null) {
+
+                $file = $form['coverImage']->getData();
+                $name_file = $file->getClientOriginalName();
+                $file->move($this->getParameter('article_cover_image_directory'). "/", $name_file);
+            } else {
+                new File($this->getParameter('article_cover_image_directory'). "/" . $name_file);
+            }
+            $ad->setCoverImage($name_file);
+            foreach ($form['images']->getData() as $image) {
+                new File($this->getParameter('article_cover_image_directory'). "/" . 'bali9.jpg');
+                
+                $name_pict = $image->getCaption().".jpg";
+                $image->setUrl($image->getCaption());
+                $image->setAd($ad);
+                $manager->persist($image);
+            }
             $manager->persist($ad);
             $manager->flush();
 
@@ -45,8 +70,11 @@ class AdminAdController extends AbstractController
                 'success',
                 "L'annonce <strong>{$ad->getTitle()}</strong> a bien été enregistrée"
             );
+            if(!empty($email) && !empty($firstname) && !empty($lastname)){
+                $mailService->mail_article($email, $firstname, $lastname, $ad->getTitle(), 'modifié');
+            }
         }
-
+        
         return $this->render('admin/ad/edit.html.twig', [
             'form' => $form->createView(),
             'ad' => $ad
@@ -63,16 +91,21 @@ class AdminAdController extends AbstractController
      * @return void
      * @Route("/admin/ads/{id}/delete", name="admin_ads_delete")
      */
-    public function delete(Ad $ad, EntityManagerInterface $manager)
+    public function delete(Ad $ad, EntityManagerInterface $manager, MailService $mailService, AdRepository $repo)
     {
-
+        $info_user = $repo->findUserByIdArticle($ad->getId());
+        foreach($info_user as $user){
+            $firstname = $user['u_firstName'];
+            $lastname = $user['u_lastName'];
+            $email = $user['u_email'];
+        }
         $manager->remove($ad);
         $manager->flush();
         $this->addFlash(
             'success',
             "L'annonce <strong>{$ad->getTitle()}</strong> a bien été supprimée"
         );
-
+        $mailService->mail_article($email, $firstname, $lastname, $ad->getTitle(), 'supprimé');
         return $this->redirectToRoute('admin_ads_index');
     }
 

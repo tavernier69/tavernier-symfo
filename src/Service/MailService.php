@@ -14,7 +14,7 @@ class MailService{
     }
 
     public function send_mail($mail_author, $firstname, $lastname, $title, $path){
-        $message = (new \Swift_Message('Hello Email'))
+        $message = (new \Swift_Message('Création d\'un nouvel article'))
                     ->setFrom('send@example.com')
                     ->setTo($mail_author)
                     ->setBody(
@@ -25,6 +25,25 @@ class MailService{
                                 'firstname' => $firstname,
                                 'articleTitle' => $title,
                                 'path' => $path
+                            ]
+                        ),
+                        'text/html'
+                    );
+                $this->mailer->send($message);
+    }
+
+    public function mail_article($mail_author, $firstname, $lastname, $title, $action){
+        $message = (new \Swift_Message('Article '. $action))
+                    ->setFrom('send@example.com')
+                    ->setTo($mail_author)
+                    ->setBody(
+                        $this->templating->render(
+                            'mail/email_article.html.twig',
+                            [
+                                'lastname' => $lastname,
+                                'firstname' => $firstname,
+                                'articleTitle' => $title,
+                                'action' => $action
                             ]
                         ),
                         'text/html'

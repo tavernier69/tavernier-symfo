@@ -1,0 +1,36 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Liste des tags
+{% endblock %}
+
+{% block body %}
+	<div class="container-fluid">
+		<h1 class="my-5"></h1>
+		<div class="mb-3">
+			<a href="{{ path('admin_tag_add') }}" class="btn btn-success">
+				Ajouter un Tag
+			</a>
+		</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Tag</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for tag in tags %}
+					<tr>
+						<td>{{ tag.name }}</td>
+						<td>
+
+							<a href="{{ path('admin_tag_delete', {'id': tag.id} ) }}" class="btn btn-danger">
+								<i class="fas fa-trash"></i>
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}

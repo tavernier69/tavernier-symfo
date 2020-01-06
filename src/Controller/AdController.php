@@ -54,12 +54,15 @@ class AdController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            dump($form['coverImage']);
+            dump($form['images']->getData());die();
             $file = $form['coverImage']->getData();
             $name_file = $file->getClientOriginalName();
 
             $file->move($this->getParameter('article_cover_image_directory') . '/' , $name_file);
 
             $ad->setCoverImage($name_file);
+            
             foreach ($ad->getImages() as $image) {
                 $name_pict = $image->getUrl();
                 // $file->move($this->getParameter('article_image_directory') . '/' , $name_pict);
@@ -107,7 +110,6 @@ class AdController extends AbstractController
         $form = $this->createForm(AdType::class, $ad);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($form['coverImage']->getData()); die;
             if ($form['coverImage']->getData() != null) {
 
                 $file = $form['coverImage']->getData();

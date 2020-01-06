@@ -41,4 +41,15 @@ class AdRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    
+    public function findUserByIdArticle($value)
+    {
+        return $this->createQueryBuilder('a')
+            ->select('a, u')
+            ->innerJoin('a.author', 'u')
+            ->andWhere(' a.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getScalarResult();
+    }
 }

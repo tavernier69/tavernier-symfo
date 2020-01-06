@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Image;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
@@ -25,6 +27,7 @@ class ImageType extends AbstractType
                 'data_class' => null,
                  'required' => false,
                   'label' => 'Image de carousel',
+                  'empty_data' => '',
                   'constraints' => array(
                     new File(),
                 ),
@@ -34,6 +37,8 @@ class ImageType extends AbstractType
                     'placeholder' => 'Donner une adresse pour l\'image'
                 ]
             ]);
+            
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -6,6 +6,10 @@
 
 {% block body %}
     <div class="container">
+        <input type="hidden" class="chield" name="" value="{{ ad.coverImage }}">
+        {% for image in ad.images %}
+            <input type="hidden" id="{{image|}}" class="carousel" value="{{ image.caption }}">
+        {% endfor %}
         {{ form_start(form) }}
         {{ form_widget(form) }}
         <button type="submit" class="btn btn-primary">Modifier l'annonce</button>
@@ -13,31 +17,6 @@
     </div>
 {% endblock %}
 
-{% block _ad_images_entry_row %}
-    <div id="block_{{ id }}">
-        {{ form_widget(form) }}
-    </div>
-{% endblock %}
-
-{% block _ad_images_widget %}
-    {{ form_widget(form) }}
-{% endblock %}
-
-{% block _ad_images_entry_widget %}
-    <div class="row align-items-center mb-3">
-        <div class="col-4">
-            {% if value %}
-                <img src="{{ value.url }}" alt="" class="img-fluid">
-            {% endif %}
-        </div>
-        <div class="col-6">
-                {{ form_row(form.caption) }}
-        </div>
-        <div class="col">
-            <button class="btn btn-danger" data-action="delete" data-target="#block_{{ id }}"><i class="fas fa-trash"></i></button>
-        </div>
-    </div>
-{% endblock %}
 
 {% block javascripts %}
     <script>
@@ -47,6 +26,31 @@
                 $(target).remove();
                 return false;
             });
+
+            const chield_pict = $(".chield").val();
+            $('label[for=ad_coverImage]').last().text(chield_pict);
+
+            $('.carousel').each(function(){
+                let id = $(this).attr('id');
+                console.log(id);
+            });
+
+            $('#ad_coverImage').on('change', function () {
+                
+                let fileName = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+                $(this).parent().find('.custom-file-label').text(fileName);
+            });
+            $('.custom-file-input').on('change', function(){
+               let id = $(this).attr('id');
+               let ligne = $('label[for='+id+']').hasClass('custom-file-label');
+               if(ligne){
+                   $('label[for='+id+']').last().addClass('custommmm_'+id)
+                   let fileName = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+                   $('.custommmm_'+id).text(fileName);
+               }
+               
+            });
+
         });
     </script>
 {% endblock %}
