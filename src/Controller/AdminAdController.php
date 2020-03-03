@@ -164,4 +164,27 @@ class AdminAdController extends AbstractController
      */
     public function logout()
     { }
+
+    /**
+     * Permet de valider un article
+     * 
+     * @Route("/admin/ad/{id}/statut", name="admin_ads_statut")
+     */
+    public function changeStatut(AdRepository $repo, Ad $ad, EntityManagerInterface $manager, MailService $mailService){
+        $user = $this->getUser();
+        $path = $this->getParameter('article_image_directory').$ad->getSlug();
+        $ad->setStatut(1);
+        $manager->persist($ad);
+        $manager->flush();
+        $manager->flush();
+        $this->addFlash(
+                'success',
+                "L'annonce <strong>{$ad->getTitle()}</strong> a bien été validée"
+            );
+        $mailService->send_mail_validated($user->getEmail(), $user->getFirstName(), $user->getLastname(), $ad->getTitle(), $path);
+
+        return $this->redirectToRoute('admin_ads_index',[
+            'ads' => $repo->findAll()
+        ]);
+    }
 }

@@ -57,7 +57,7 @@ class AccountController extends AbstractController
      *
      * @return Response
      */
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder)
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, RegionsRepository $repoRegion)
     {
 
         $user = new User();
@@ -88,7 +88,8 @@ class AccountController extends AbstractController
         }
 
         return $this->render('account/registration.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'regions' => $repoRegion->findAll()
         ]);
     }
 

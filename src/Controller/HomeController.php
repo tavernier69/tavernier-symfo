@@ -17,7 +17,7 @@ class HomeController extends AbstractController
     {
 
         return $this->render('home/index.html.twig', [
-            'ads' => $repo->findLast(),
+            'ads' => $repo->findAllValidated(),
             'regions' => $repoRegion->findAll()
         ]);
     }

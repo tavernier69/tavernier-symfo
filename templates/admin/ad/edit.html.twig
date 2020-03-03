@@ -8,7 +8,7 @@
     <div class="container">
         <input type="hidden" class="chield" name="" value="{{ ad.coverImage }}">
         {% for image in ad.images %}
-            <input type="hidden" id="{{image|}}" class="carousel" value="{{ image.caption }}">
+            <input type="hidden" id="{{image.id}}" class="carousel" value="{{ image.caption }}">
         {% endfor %}
         {{ form_start(form) }}
         {{ form_widget(form) }}

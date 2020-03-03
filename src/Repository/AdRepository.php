@@ -52,4 +52,14 @@ class AdRepository extends ServiceEntityRepository
             ->getQuery()
             ->getScalarResult();
     }
+
+    public function findAllValidated(){
+        return $this->createQueryBuilder('a')
+        ->andWhere('a.statut = :val')
+        ->setParameter('val', 1)
+        ->orderBy('a.id', 'DESC')
+        ->setMaxResults(6)
+        ->getQuery()
+        ->getResult();
+    }
 }

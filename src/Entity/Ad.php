@@ -87,6 +87,11 @@ class Ad
      */
     private $tags;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $statut;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -305,6 +310,18 @@ class Ad
     public function setTags(?Tag $tags): self
     {
         $this->tags = $tags;
+
+        return $this;
+    }
+
+    public function getStatut(): ?int
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(int $statut): self
+    {
+        $this->statut = $statut;
 
         return $this;
     }

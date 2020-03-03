@@ -19,7 +19,7 @@ class MailService{
                     ->setTo($mail_author)
                     ->setBody(
                         $this->templating->render(
-                            'mail/email.html.twig',
+                            'mail/email_waiting_validation.html.twig',
                             [
                                 'lastname' => $lastname,
                                 'firstname' => $firstname,
@@ -44,6 +44,24 @@ class MailService{
                                 'firstname' => $firstname,
                                 'articleTitle' => $title,
                                 'action' => $action
+                            ]
+                        ),
+                        'text/html'
+                    );
+                $this->mailer->send($message);
+    }
+    public function send_mail_validated($mail_author, $firstname, $lastname, $title, $path){
+        $message = (new \Swift_Message('Validation d\'un nouvel article'))
+                    ->setFrom('send@example.com')
+                    ->setTo($mail_author)
+                    ->setBody(
+                        $this->templating->render(
+                            'mail/email.html.twig',
+                            [
+                                'lastname' => $lastname,
+                                'firstname' => $firstname,
+                                'articleTitle' => $title,
+                                'path' => $path
                             ]
                         ),
                         'text/html'

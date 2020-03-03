@@ -29,7 +29,7 @@ class AdController extends AbstractController
      */
     public function index(AdRepository $repo, SessionInterface $session, RegionsRepository $repoRegion)
     {
-        $ads = $repo->findAll();
+        $ads = $repo->findAllValidated();
         return $this->render('ad/index.html.twig', [
             'ads' => $ads,
             'regions' => $repoRegion->findAll()
@@ -54,8 +54,8 @@ class AdController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($form['coverImage']);
-            dump($form['images']->getData());die();
+            // dump($form['coverImage']);
+            // dump($form['images']->getData());die();
             $file = $form['coverImage']->getData();
             $name_file = $file->getClientOriginalName();
 
@@ -73,6 +73,7 @@ class AdController extends AbstractController
 
             $ad->setAuthor($this->getUser());
             $ad->setCreationDate(time());
+            $ad->setStatut(0);
             //$manager = $this->getDoctrine()->getmanager();
             $manager->persist($ad);
             $manager->flush();
